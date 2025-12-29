@@ -8,55 +8,54 @@ using MiniDriveVideo.Data;
 
 #nullable disable
 
-namespace MiniDrive.Migrations
+namespace MiniDrive.Migrations;
+
+[DbContext(typeof(AppDbContext))]
+partial class AppDbContextModelSnapshot : ModelSnapshot
 {
-    [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.1")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+        modelBuilder
+            .HasAnnotation("ProductVersion", "10.0.1")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MiniDrive.Models.ArquivoModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+        modelBuilder.Entity("MiniDrive.Models.ArquivoModel", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<byte[]>("ArquivoBytes")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                b.Property<byte[]>("ArquivoBytes")
+                    .IsRequired()
+                    .HasColumnType("varbinary(max)");
 
-                    b.Property<DateTime>("DataUpload")
-                        .HasColumnType("datetime2");
+                b.Property<DateTime>("DataUpload")
+                    .HasColumnType("datetime2");
 
-                    b.Property<string>("Extensao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Extensao")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NomeArquivo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("NomeArquivo")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("Tamanho")
-                        .HasColumnType("bigint");
+                b.Property<long>("Tamanho")
+                    .HasColumnType("bigint");
 
-                    b.Property<string>("TipoMime")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("TipoMime")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Arquivos");
-                });
+                b.ToTable("Arquivos");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }
