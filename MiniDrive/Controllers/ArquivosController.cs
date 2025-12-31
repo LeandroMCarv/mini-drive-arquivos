@@ -52,4 +52,13 @@ public class ArquivosController : Controller
 
         return RedirectToAction("Index");
     }
+
+    public FileResult Download(int id)
+    {
+        var arquivo = _context.Arquivos.Find(id);
+        if (arquivo == null) return null;
+
+        return File(arquivo.ArquivoBytes, arquivo.TipoMime, $"{arquivo.NomeArquivo}.{arquivo.Extensao}");
+    }
+
 }
