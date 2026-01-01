@@ -61,4 +61,16 @@ public class ArquivosController : Controller
         return File(arquivo.ArquivoBytes, arquivo.TipoMime, $"{arquivo.NomeArquivo}.{arquivo.Extensao}");
     }
 
+    public JsonResult Delete(int id)
+    {
+        var arquivo = _context.Arquivos.Find(id);
+        if (arquivo == null) return Json(new { success = false });
+
+        _context.Arquivos.Remove(arquivo);
+        _context.SaveChanges();
+
+        return Json(new { success = true });
+
+    }
+
 }
