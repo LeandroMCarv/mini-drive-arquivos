@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniDrive.Models;
-using MiniDriveVideo.Data;
+using MiniDrive.Data;
 using System.Data;
 
 namespace MiniDrive.Controllers;

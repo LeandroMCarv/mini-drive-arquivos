@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MiniDriveVideo.Data;
+using MiniDrive.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

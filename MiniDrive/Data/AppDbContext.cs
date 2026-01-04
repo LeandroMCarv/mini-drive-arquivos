@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniDrive.Models;
-using System.Collections.Generic;
 
-namespace MiniDriveVideo.Data;
+namespace MiniDrive.Data;
 
 public class AppDbContext : DbContext
 {
