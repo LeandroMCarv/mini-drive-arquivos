@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MiniDrive.Models;
+using Microsoft.EntityFrameworkCore;
 using MiniDrive.Data;
+using MiniDrive.Models;
 using System.Data;
 
 namespace MiniDrive.Controllers;
@@ -14,63 +15,60 @@ public class ArquivosController : Controller
         _context = context;
     }
 
-    public IActionResult Index(string tipo)
+    public async Task<IActionResult> Index(string tipo)
     {
         var arquivos = _context.Arquivos.AsQueryable();
-        if(tipo != "" && tipo != null)
+        if (tipo is not "" and not null)
         {
             arquivos = arquivos.Where(a => a.Extensao.Contains(tipo));
         }
 
         ViewBag.Filtro = tipo;
 
-        return View(arquivos.OrderByDescending(a => a.DataUpload).ToList());
+        return View(await arquivos.OrderByDescending(a => a.DataUpload).ToListAsync());
     }
 
     [HttpPost]
-    public IActionResult Upload(IFormFile arquivo)
+    public async Task<IActionResult> Upload(IFormFile arquivo)
     {
-        if(arquivo != null && arquivo.Length > 0)
+        if (arquivo is not null && arquivo.Length > 0)
         {
-            using (var ms = new MemoryStream())
+            using var ms = new MemoryStream();
+            await arquivo.CopyToAsync(ms);
+            var arquivoModel = new ArquivoModel
             {
-                arquivo.CopyTo(ms);
-                var arquivoModel = new ArquivoModel
-                {
-                    NomeArquivo = Path.GetFileNameWithoutExtension(arquivo.FileName),
-                    Extensao = Path.GetExtension(arquivo.FileName).TrimStart('.'),
-                    TipoMime = arquivo.ContentType,
-                    Tamanho = arquivo.Length,
-                    DataUpload = DateTime.Now,
-                    ArquivoBytes = ms.ToArray()
-                };
+                NomeArquivo = Path.GetFileNameWithoutExtension(arquivo.FileName),
+                Extensao = Path.GetExtension(arquivo.FileName).TrimStart('.'),
+                TipoMime = arquivo.ContentType,
+                Tamanho = arquivo.Length,
+                DataUpload = DateTime.Now,
+                ArquivoBytes = ms.ToArray()
+            };
 
-                _context.Arquivos.Add(arquivoModel);
-                _context.SaveChanges();
-            }
+            await _context.Arquivos.AddAsync(arquivoModel);
+            await _context.SaveChangesAsync();
         }
 
         return RedirectToAction("Index");
     }
 
-    public FileResult Download(int id)
+    public async Task<FileResult?> Download(int id)
     {
-        var arquivo = _context.Arquivos.Find(id);
-        if (arquivo == null) return null;
+        var arquivo = await _context.Arquivos.FindAsync(id);
+        if (arquivo is null) return null;
 
         return File(arquivo.ArquivoBytes, arquivo.TipoMime, $"{arquivo.NomeArquivo}.{arquivo.Extensao}");
     }
 
-    public JsonResult Delete(int id)
+    public async Task<JsonResult> Delete(int id)
     {
-        var arquivo = _context.Arquivos.Find(id);
-        if (arquivo == null) return Json(new { success = false });
+        var arquivo = await _context.Arquivos.FindAsync(id);
+        if (arquivo is null) return Json(new { success = false });
 
         _context.Arquivos.Remove(arquivo);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return Json(new { success = true });
 
     }
-
 }
